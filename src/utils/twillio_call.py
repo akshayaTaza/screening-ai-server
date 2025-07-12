@@ -10,7 +10,7 @@ import json
 # CONFIG
 # ----------------------------
 account_sid = 'ACcff9024a5adf75dce972b4c3e7a64b28'
-auth_token = 'bcb812e999a501b7df281afc175a8945'
+auth_token = '3b35d56d53423a7fc0e0037731e7e020'
 genai.configure(api_key='AIzaSyBertql-JOr6tXPMJXfsyzrYA8ZffDIbuE')
 
 to_number = '+918754786877'
@@ -20,11 +20,18 @@ twiml_url = 'https://voicebotscreening-1486.twil.io/voicebot?questionIndex=0'
 # Create data directory for recordings if it doesn't exist
 # Get the directory where this script is located
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+print("SCRIPT_DIR", {SCRIPT_DIR})
+
 PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
+print("PROJECT_ROOT", {PROJECT_ROOT})
+
 RECORDINGS_DIR = os.path.join(PROJECT_ROOT, "data", "recordings")
+print("RECORDINGS_DIR", {RECORDINGS_DIR})
+
+
 os.makedirs(RECORDINGS_DIR, exist_ok=True)
 
-def initiate_call_and_process():
+def initiate_call():
     """
     Initiates a Twilio call, waits for recording, downloads it, and processes it
     through the existing audio screening pipeline.
@@ -40,8 +47,8 @@ def initiate_call_and_process():
     )
 
     print(f"✅ Call started. SID: {call.sid}")
-    print("⏳ Waiting 120 seconds for recording to be ready...")
-    time.sleep(120)  # Wait for recording to be processed
+    print("⏳ Waiting 180 seconds for recording to be ready...")
+    time.sleep(180)  # Wait for recording to be processed
 
     # ----------------------------
     # STEP 2: DOWNLOAD RECORDING
@@ -54,7 +61,8 @@ def initiate_call_and_process():
 
     recording = recordings[0]
     recording_url = f"https://api.twilio.com{recording.uri.replace('.json', '.mp3')}"
-    mp3_file = os.path.join(RECORDINGS_DIR, f"recording-{recording.sid}.mp3")
+    # mp3_file = os.path.join(RECORDINGS_DIR, f"recording-{recording.sid}.mp3")
+    mp3_file = os.path.join(RECORDINGS_DIR, f"recording.mp3")
 
     print(f"🎧 Recording URL: {recording_url}")
 
@@ -68,37 +76,18 @@ def initiate_call_and_process():
         print(f"❌ Failed to download: {response.status_code}")
         return None
 
+def process_call():
     # ----------------------------
     # STEP 3: PROCESS RECORDING
     # ----------------------------
     print("🔍 Processing audio through screening pipeline...")
     try:
+        mp3_file = os.path.join(RECORDINGS_DIR, f"recording.mp3")
+        print("mp3_file: ", {mp3_file})
+        
         result = process_audio_interview(mp3_file)
         print("✅ Audio processing completed successfully!")
         return result
     except Exception as e:
         print(f"❌ Error processing audio: {str(e)}")
         return None
-
-def main():
-    """
-    Main function to run the complete call and processing workflow
-    """
-    print("🚀 Starting Twilio call and audio screening workflow...")
-    
-    result = initiate_call_and_process()
-    
-    if result:
-        print("\n📊 Screening Results:")
-        print(json.dumps(result, indent=2))
-        
-        # Save results to file
-        results_file = os.path.join(RECORDINGS_DIR, f"screening_results_{int(time.time())}.json")
-        with open(results_file, 'w') as f:
-            json.dump(result, f, indent=2)
-        print(f"💾 Results saved to {results_file}")
-    else:
-        print("❌ Failed to complete screening workflow")
-
-if __name__ == "__main__":
-    main() 

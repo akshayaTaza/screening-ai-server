@@ -8,6 +8,8 @@ import logging
 # Add src directory to path for imports
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from utils.calculate_score import calculate_score
+from utils.twillio_call import initiate_call
+from utils.twillio_call import process_call
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -19,12 +21,6 @@ app = Flask(__name__)
 UPLOAD_FOLDER = '../data/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-# Your placeholder for score calculation function
-# def calculate_score(resume_text, jd_text):
-#     # Replace this with your actual logic
-#     score = 95  # Dummy static score for now
-#     return {"score": score, "match_level": "Strong"}
 
 @app.route('/calculate_score', methods=['POST'])
 def calculate():
@@ -103,6 +99,28 @@ def calculate():
     logger.info("Temporary files cleaned up")
 
     return jsonify(result), 200
+
+@app.route('/start_call', methods=['POST'])
+def start_call():
+    try:
+        # Call your Twilio logic
+        call_response = initiate_call()
+
+        return jsonify({"status": "success", "twilio_response": call_response}), 200
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+    
+@app.route('/process_call', methods=['POST'])
+def process_file():
+    try:
+        result = process_call()
+
+        return jsonify({"status": "success", "data": result}), 200
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)

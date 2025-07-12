@@ -8,7 +8,7 @@ import json
 # Add import for audio screening
 from .audio_screening import process_audio_interview
 # Add import for Twilio call functionality
-from .twillio_call import initiate_call_and_process
+
 load_dotenv()
 
 RESUME_PATH = "/Users/tazapay/Hackathon/Parser/v2/ai-screener-backend//data/resumes/ResumeQA.pdf"

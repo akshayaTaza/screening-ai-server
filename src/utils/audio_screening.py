@@ -1,8 +1,8 @@
-import whisper
 import openai
 import json
 import os
 import re
+import whisper
 
 # Set your OpenAI API key here or via environment variable
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -17,8 +17,14 @@ PREFERRED_WORK_MODE = "hybrid"
 
 
 def transcribe_audio(audio_path):
+    print("in transcribe_audio")
+
     model = whisper.load_model("base")
+    print("load model done")
+
     result = model.transcribe(audio_path)
+    print("model transcribe done")
+
     return result["text"]
 
 
