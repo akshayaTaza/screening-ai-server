@@ -54,10 +54,10 @@ def calculate_score(resume_text, jd_text):
     resume_struct = extract_structured_data(RESUME_PROMPT, resume_text)
     jd_struct = extract_structured_data(JD_PROMPT, jd_text)
 
-    print("Extracted Resume JSON:")
-    print(json.dumps(resume_struct, indent=2))
-    print("Extracted JD JSON:")
-    print(json.dumps(jd_struct, indent=2))
+    # print("Extracted Resume JSON:")
+    # print(json.dumps(resume_struct, indent=2))
+    # print("Extracted JD JSON:")
+    # print(json.dumps(jd_struct, indent=2))
 
     # LLM-based scoring and analysis
     scoring_prompt = f'''
@@ -104,5 +104,6 @@ Job Description JSON:
 '''
 
     analysis = extract_structured_data(scoring_prompt, "")
-    print("\nLLM Analysis and Scoring:")
-    print(json.dumps(analysis, indent=2))
+    print("\nLLM Analysis and Scoring done")
+    # print(json.dumps(analysis, indent=2))
+    return analysis

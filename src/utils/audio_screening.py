@@ -72,7 +72,7 @@ Return only the JSON.
         return json.loads(content)
     except Exception as e:
         print("[ERROR] Could not decode LLM response as JSON. Raw response:")
-        print(content)
+        # print(content)
         raise e
 
 
@@ -114,7 +114,7 @@ Return only the JSON.
         return json.loads(content)
     except Exception as e:
         print("[ERROR] Could not decode LLM response as JSON. Raw response:")
-        print(content)
+        # print(content)
         raise e
 
 
