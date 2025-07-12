@@ -7,7 +7,7 @@ import logging
 
 # Add src directory to path for imports
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from utils.util import calculate_score
+from utils.calculate_score import calculate_score
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
