@@ -10,6 +10,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from utils.calculate_score import calculate_score
 from utils.twillio_call import initiate_call
 from utils.twillio_call import process_call
+from utils.twillio_call import download_call
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -121,6 +122,12 @@ def process_file():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+@app.route('/download_recording', methods=['POST'])
+def download_recording():
+    print("downloading recording mp3 file")
+    download_call(request.form.get('RecordingUrl'))
+        
+    return jsonify({"status": "success"}), 200
 
 if __name__ == '__main__':
     app.run(debug=True)

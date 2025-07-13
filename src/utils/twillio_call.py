@@ -43,40 +43,17 @@ def initiate_call():
         url=twiml_url,
         to=to_number,
         from_=from_number,
-        record=True
+        record=True,
+        recording_status_callback='https://841cbbfc2c11.ngrok-free.app/download_recording',
+        recording_status_callback_event='completed'
     )
 
     print(f"✅ Call started. SID: {call.sid}")
     print("⏳ Waiting 180 seconds for recording to be ready...")
-    time.sleep(180)  # Wait for recording to be processed
-
-    # ----------------------------
-    # STEP 2: DOWNLOAD RECORDING
-    # ----------------------------
-    recordings = client.recordings.list(call_sid=call.sid, limit=1)
-
-    if not recordings:
-        print("❌ No recording found.")
-        return None
-
-    recording = recordings[0]
-    recording_url = f"https://api.twilio.com{recording.uri.replace('.json', '.mp3')}"
-    # mp3_file = os.path.join(RECORDINGS_DIR, f"recording-{recording.sid}.mp3")
-    mp3_file = os.path.join(RECORDINGS_DIR, f"recording.mp3")
-
-    print(f"🎧 Recording URL: {recording_url}")
-
-    response = requests.get(recording_url, auth=(account_sid, auth_token), stream=True)
-    if response.status_code == 200:
-        with open(mp3_file, 'wb') as f:
-            for chunk in response.iter_content(chunk_size=1024):
-                f.write(chunk)
-        print(f"✅ Recording saved as {mp3_file}")
-    else:
-        print(f"❌ Failed to download: {response.status_code}")
-        return None
+    # time.sleep(180)  # Wait for recording to be processed
 
 def process_call():
+
     # ----------------------------
     # STEP 3: PROCESS RECORDING
     # ----------------------------
@@ -91,3 +68,19 @@ def process_call():
     except Exception as e:
         print(f"❌ Error processing audio: {str(e)}")
         return None
+    
+def download_call(recording_url):
+    response = requests.get(recording_url, auth=(account_sid, auth_token), stream=True)
+
+    mp3_file = os.path.join(RECORDINGS_DIR, f"recording.mp3")
+    print("mp3_file: ", {mp3_file})
+
+    try:
+        with open(mp3_file, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=1024):
+                f.write(chunk)
+        print(f"✅ Recording saved as {mp3_file}")
+    except Exception as e:
+        print(f"❌ Failed to save to file: {str(e)}")
+        return None
+    
